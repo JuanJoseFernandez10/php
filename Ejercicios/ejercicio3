@@ -1,0 +1,15 @@
+<html>
+<head>
+<tittle>Ejercicio3</tittle>	
+</head>
+<body>
+	<table>
+	<?php
+	$nombre = "JJ";
+	$apellido = "Fernadez"; 
+		echo "<tr>" . "<td>" . $nombre . "</td><td>" . </td>" . $apellido . "</tr>";
+	?> 
+	</table>
+
+</body>
+</html>
