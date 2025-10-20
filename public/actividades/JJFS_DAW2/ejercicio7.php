@@ -4,43 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        table{
+            border: 2px solid black;
+        }
+    </style>
 </head>
 <body>
+    <form action="ejercicio7.php" method="get">
+        <table>
+            <tr>
+                <td><input type="number" name="num1"  min="0" max="9"></td>
+                <td><input type="number" name="num2"  min="0" max="9"></td>
+                <td><input type="number" name="num3"  min="0" max="9"></td>
+                <td><input type="number" name="num4"  min="0" max="9"></td>
+            </tr>
+        </table>
+        <button type="submit" id="botonEnv" <?php if($allTrue) echo "disabled" ?>>Enviar</button><br>
+        
+    </form>
+    <br><br>
     <?php
-        $num1 = $_GET["num1"];
-        $num2 = $_GET["num2"];
-        $num3 = $_GET["num3"];
-        $num4 = $_GET["num4"];
+        session_start();
 
-        $boton = $dom->getElemntById('botonEnv');
+        if(!isset($_SESSION['intentos'])){
+            $_SESSION['intentos'] = 0;
+        }
+        echo $_SESSION['intentos'];
+        if($_SESSION['intentos'] >= 4){
+            echo "<h3 style='color: yellow;'>Has agotado los intentos, acceso bloqueado</h3>";
+            echo "<form method='GET'> <button type='submit' name='btnReset'> Reiniciar </button> </form>";
+            if(isset($_GET['btnReset'])){
+                $_SESSION['intentos'] = 0;
+            }
+        }else{
+            $esValido = false;
+            if(isset($_GET["num1"]) && isset($_GET["num2"]) && isset($_GET["num3"]) && isset($_GET["num4"])){
+                $num1 = $_GET["num1"];
+                $num2 = $_GET["num2"];
+                $num3 = $_GET["num3"];
+                $num4 = $_GET["num4"];
+                $contr_user = [$num1, $num2, $num3, $num4];
+                echo "<h2>Numeros contraseña introducidos: </h2>";
+                echo "<h3>";
+                foreach($contr_user as $contr){
+                    echo "- " . $contr;
+                }
+                echo "</h3>";
+                $esValido = true;
+            }
+            if($esValido){
+                $contraseña = [4, 3, 6, 9];
+                $acierto = [false, false, false, false];
 
-        $num_contr1 = random_int(0,9);
-        $num_contr2 = random_int(0,9);
-        $num_contr3 = random_int(0,9);
-        $num_contr4 = random_int(0,9);
-        echo "<table><tr>";
+                echo "<table><tr>";
+                for($i = 0; $i < count($contraseña); $i++){
+                    if($contr_user[$i] == $contraseña[$i]){
+                        echo "<td>" . $contraseña[$i] . "</td>";
+                        $acierto[$i] = true;
+                    }else{
+                        echo "<td> * </td>";
+                        $acierto[$i] = false;
+                    }
+                }
+                echo "</tr></table>";
 
-        if($num1 == $num_contr1){
-            echo "<td>" . $num1 . "</td>";   
-        }else{
-            echo "<td>*</td>";
+                $allTrue = false;
+                foreach ($acierto as $v) {
+                    if ($v) {
+                        $allTrue = true;
+                        break;
+                    }
+                }
+                if($allTrue){
+                    echo "<h1> Has acertado </h1>";
+                }else{
+                $_SESSION['intentos']++;
+                }
+            }else{
+                if($_SESSION['intentos'] > 0){
+                echo "<h1 style='color: red;'> Debes introducir un numero</h1>";
+                }
+            }
         }
-        if($num2 == $num_contr2){
-            echo "<td>" . $num2 . "</td>"; 
-        }else{
-            echo "<td>*</td>";
-        }
-        if($num3 == $num_contr3){
-        echo "<td>" . $num3 . "</td>"; 
-        }else{
-            echo "<td>*</td>";
-        }
-        if($num4 == $num_contr4){
-            echo "<td>" . $num4 . "</td>"; 
-        }else{
-            echo "<td>*</td>";
-        }
-        echo "</tr></table>";
     ?>
 </body>
 </html>
